@@ -23,10 +23,10 @@ public class Category {
     private String name;
 
     @Column(name = "position", nullable = false)
-    private int position;
+    private int position = 9999;
 
-    public Category(String name, int order) {
+    public Category(String name, int position) {
         this.name = name;
-        this.position = order;
+        this.position = position;
     }
 }
