@@ -19,10 +19,10 @@ public class Category {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "position", nullable = false)
+    @Column(name = "position", unique = true, nullable = false)
     private int position;
 
     public Category(String name, int position) {

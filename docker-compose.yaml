@@ -6,6 +6,5 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: Wishma22
-      POSTGRES_DB: arcade
     ports:
       - "5432:5432"

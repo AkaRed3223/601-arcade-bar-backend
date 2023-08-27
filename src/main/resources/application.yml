@@ -1,7 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/arcade
-    username: akared
+    url: jdbc:postgresql://localhost:5432/
     password: Wishma22
   jpa:
     hibernate:

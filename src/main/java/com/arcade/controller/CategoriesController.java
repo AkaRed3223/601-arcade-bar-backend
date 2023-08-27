@@ -6,7 +6,6 @@ import com.arcade.service.CategoriesService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -22,21 +21,30 @@ public class CategoriesController {
 
     @GetMapping
     public ResponseEntity<List<Category>> findAll() {
+        return ResponseEntity.ok(categoriesService.findAll());
+    }
 
-        List<Category> categories = categoriesService.findAll();
-
-        if (CollectionUtils.isEmpty(categories)) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.ok(categories);
+    @GetMapping("/{id}")
+    public ResponseEntity<Category> findById(@PathVariable long id) {
+        return ResponseEntity.ok(categoriesService.findById(id));
     }
 
     @PostMapping
     public ResponseEntity<Category> insert(@RequestBody CategoryRequest body) {
-        Category insertedCategory  = categoriesService.insert(body);
+        Category insertedCategory = categoriesService.insert(body);
         URI location = URI.create(String.format("/%s/%s", "categories", insertedCategory.getId()));
         return ResponseEntity.created(location).body(insertedCategory);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody CategoryRequest request) {
+        return ResponseEntity.ok(categoriesService.update(id, request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        categoriesService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
