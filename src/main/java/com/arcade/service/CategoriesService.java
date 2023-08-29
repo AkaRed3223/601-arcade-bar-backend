@@ -51,7 +51,11 @@ public class CategoriesService {
         Optional.of(request.getName()).ifPresent(category::setName);
         Optional.of(request.getPosition()).ifPresent(category::setPosition);
 
-        categoriesRepository.save(category);
+        try {
+            categoriesRepository.save(category);
+        } catch (DataIntegrityViolationException e) {
+            throw new ResourceAlreadyExistsException(ResourcesEnum.CATEGORY, ResourcesFieldsEnum.POSITION, String.valueOf(request.getPosition()));
+        }
 
         return category;
     }

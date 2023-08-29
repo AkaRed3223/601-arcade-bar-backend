@@ -21,7 +21,9 @@ public class CategoriesController {
 
     @GetMapping
     public ResponseEntity<List<Category>> findAll() {
-        return ResponseEntity.ok(categoriesService.findAll());
+        var response = categoriesService.findAll();
+        log.info(response.toString());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
