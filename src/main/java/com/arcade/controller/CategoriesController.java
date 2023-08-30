@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -21,7 +22,8 @@ public class CategoriesController {
 
     @GetMapping
     public ResponseEntity<List<Category>> findAll() {
-        var response = categoriesService.findAll();
+        List<Category> response = categoriesService.findAll();
+        response.sort(Comparator.comparingInt(Category::getPosition));
         log.info(response.toString());
         return ResponseEntity.ok(response);
     }

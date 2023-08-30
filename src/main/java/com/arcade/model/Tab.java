@@ -28,7 +28,7 @@ public class Tab {
     private List<Product> products;
 
     @Column(name = "total", nullable = false)
-    private double total;
+    private Double total;
 
     public Tab(String customer, List<Product> products) {
         this.customer = customer;

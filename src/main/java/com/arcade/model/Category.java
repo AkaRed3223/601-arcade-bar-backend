@@ -23,9 +23,9 @@ public class Category {
     private String name;
 
     @Column(name = "position", unique = true, nullable = false)
-    private int position;
+    private Integer position;
 
-    public Category(String name, int position) {
+    public Category(String name, Integer position) {
         this.name = name;
         this.position = position;
     }

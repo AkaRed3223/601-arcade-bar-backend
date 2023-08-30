@@ -7,12 +7,12 @@ import com.arcade.exception.ResourceNotFoundException;
 import com.arcade.model.Category;
 import com.arcade.model.request.CategoryRequest;
 import com.arcade.repository.CategoriesRepository;
+import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +28,12 @@ public class CategoriesService {
         return categoriesRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.CATEGORY, id));
+    }
+
+    public Category findByName(String name) {
+        return categoriesRepository
+                .findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.CATEGORY, name));
     }
 
     public Category insert(CategoryRequest request) {
@@ -48,8 +54,8 @@ public class CategoriesService {
     public Category update(Long id, CategoryRequest request) {
         Category category = findById(id);
 
-        Optional.of(request.getName()).ifPresent(category::setName);
-        Optional.of(request.getPosition()).ifPresent(category::setPosition);
+        if (StringUtils.isNotBlank(request.getName())) category.setName(request.getName());
+        if (request.getPosition() != null) category.setPosition(request.getPosition());
 
         try {
             categoriesRepository.save(category);

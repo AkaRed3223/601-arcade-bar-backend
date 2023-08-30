@@ -19,17 +19,17 @@ public class Product {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @Column(name = "price", nullable = false)
-    private double price;
+    private Double price;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    public Product(String name, double price, Category category) {
+    public Product(String name, Double price, Category category) {
         this.name = name;
         this.price = price;
         this.category = category;
