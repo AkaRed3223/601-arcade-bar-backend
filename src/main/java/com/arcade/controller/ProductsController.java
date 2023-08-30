@@ -37,7 +37,7 @@ public class ProductsController {
     public ResponseEntity<Product> insert(@RequestBody ProductRequest body) {
 
         Product insertedProduct = productsService.insert(body);
-        URI location = URI.create(String.format("/%s/%s", "categories", insertedProduct.getId()));
+        URI location = URI.create(String.format("/%s/%s", "products", insertedProduct.getId()));
         return ResponseEntity.created(location).body(insertedProduct);
     }
 

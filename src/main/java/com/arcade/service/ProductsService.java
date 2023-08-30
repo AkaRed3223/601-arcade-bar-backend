@@ -26,10 +26,16 @@ public class ProductsService {
         return productsRepository.findAll();
     }
 
-    public Product findById(long id) {
+    public Product findById(Long id) {
         return productsRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.PRODUCT, id));
+    }
+
+    public Product findByName(String name) {
+        return productsRepository
+                .findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.PRODUCT, name));
     }
 
     public Product insert(ProductRequest request) {
@@ -44,16 +50,6 @@ public class ProductsService {
         }
 
         return product;
-    }
-
-    private Category updateCategory(Category cOld, Category cNew) {
-        if (cNew.getPosition() != null) {
-            cOld.setPosition(cNew.getPosition());
-        }
-        if (StringUtils.isNotBlank(cNew.getName())) {
-            cOld.setName(cNew.getName());
-        }
-        return cOld;
     }
 
     public Product update(Long id, ProductRequest request) {

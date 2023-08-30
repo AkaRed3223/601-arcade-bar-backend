@@ -5,8 +5,8 @@ public enum ResourcesFieldsEnum {
     NAME,
     POSITION,
     PRICE,
+    EXTERNAL_ID,
     CATEGORY,
-    CUSTOMER,
     PRODUCTS,
     TOTAL,
 }

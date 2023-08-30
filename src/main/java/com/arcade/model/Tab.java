@@ -21,8 +21,11 @@ public class Tab {
     @Setter(AccessLevel.NONE)
     private Long id;
 
+    @Column(name = "externalId", nullable = false, unique = true)
+    private Long externalId;
+
     @Column(name = "customer", nullable = false)
-    private String customer;
+    private String name;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Product> products;
@@ -30,8 +33,9 @@ public class Tab {
     @Column(name = "total", nullable = false)
     private Double total;
 
-    public Tab(String customer, List<Product> products) {
-        this.customer = customer;
+    public Tab(Long externalId, String name, List<Product> products) {
+        this.externalId = externalId;
+        this.name = name;
         this.products = products;
         this.total = products.stream().mapToDouble(Product::getPrice).sum();
     }
