@@ -4,19 +4,22 @@ import com.arcade.constant.ResourcesEnum;
 import com.arcade.constant.ResourcesFieldsEnum;
 import com.arcade.exception.ResourceAlreadyExistsException;
 import com.arcade.exception.ResourceNotFoundException;
+import com.arcade.exception.TabNotEmptyException;
 import com.arcade.model.Product;
 import com.arcade.model.Tab;
 import com.arcade.model.request.TabRequest;
 import com.arcade.repository.TabsRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class TabsService {
 
     private final TabsRepository tabsRepository;
@@ -26,6 +29,12 @@ public class TabsService {
         return tabsRepository.findAll();
     }
 
+    public Tab findById(Long id) {
+        return tabsRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.TAB, id));
+    }
+
     public Tab findByExternalId(Long externalId) {
         return tabsRepository
                 .findByExternalId(externalId)
@@ -33,10 +42,7 @@ public class TabsService {
     }
 
     public Tab insert(TabRequest request) {
-
-        List<Product> products = request.getProducts().stream().map(productsService::findByName).collect(Collectors.toList());
-
-        Tab tab = new Tab(request.getExternalId(), request.getName(), products);
+        Tab tab = new Tab(request.getExternalId(), request.getName());
 
         try {
             tabsRepository.save(tab);
@@ -47,37 +53,51 @@ public class TabsService {
         return tab;
     }
 
-    public Tab findByName(String name) {
-        return tabsRepository
-                .findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.TAB, name));
+    public Tab insertProductInTab(Long tabExternalId, Long productId) {
+        return updateProductsFromTab(tabExternalId, productId, true);
     }
 
-    public Tab findById(Long id) {
-        return tabsRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.TAB, id));
+    public Tab removeProductFromTab(Long tabExternalId, Long productId) {
+        return updateProductsFromTab(tabExternalId, productId, false);
     }
 
-    /*public Product update(Long id, ProductRequest request) {
+    private Tab updateProductsFromTab(Long tabExternalId, Long productId, Boolean isAdd) {
+        Tab tab = findByExternalId(tabExternalId);
 
-        Product product = findById(id);
+        if (isAdd) {
+            tab.getProducts().add(productsService.findById(productId));
+        } else {
+            Product product = tab.getProducts().stream().filter(p -> p.getId().equals(productId)).findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.PRODUCT, productId));
 
-        if (StringUtils.isNotBlank(request.getName())) product.setName(request.getName());
-        if (request.getPrice() != null) product.setPrice(request.getPrice());
-
-        try {
-            productsRepository.save(product);
-        } catch (DataIntegrityViolationException e) {
-            throw new ResourceAlreadyExistsException(ResourcesEnum.PRODUCT, ResourcesFieldsEnum.NAME, String.valueOf(request.getName()));
+            tab.getProducts().remove(product);
         }
 
-        return product;
-    }*/
+        tab.setTotal(tab.getProducts().stream().mapToDouble(Product::getPrice).sum());
 
-    /*public void delete(Long id) {
-        findById(id);
-        productsRepository.deleteById(id);
-    }*/
+        try {
+            tabsRepository.save(tab);
+        } catch (DataIntegrityViolationException e) {
+            throw new ResourceAlreadyExistsException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, String.valueOf(tabExternalId));
+        }
+        return tab;
+
+    }
+
+    public void delete(Long id) {
+        Tab tab = findById(id);
+        if (!CollectionUtils.isEmpty(tab.getProducts())) {
+            throw new TabNotEmptyException();
+        }
+        try {
+            tabsRepository.deleteById(tab.getId());
+            log.info(String.format("Deletion success for TAB id: %s, externalId: %s, name: %s", tab.getId(), tab.getExternalId(), tab.getName()));
+        } catch (Exception e) {
+            log.error(String.format("Failed to delete TAB id: %s, externalId: %s, name: %s", tab.getId(), tab.getExternalId(), tab.getName()));
+            throw new ResourceNotFoundException(ResourcesEnum.TAB, tab.getName());
+        }
+    }
+
+
 
 }

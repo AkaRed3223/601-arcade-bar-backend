@@ -30,24 +30,30 @@ public class CategoriesController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Category> findById(@PathVariable long id) {
-        return ResponseEntity.ok(categoriesService.findById(id));
+        Category response = categoriesService.findById(id);
+        log.info(response.toString());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
     public ResponseEntity<Category> insert(@RequestBody CategoryRequest body) {
         Category insertedCategory = categoriesService.insert(body);
+        log.info(insertedCategory.toString());
         URI location = URI.create(String.format("/%s/%s", "categories", insertedCategory.getId()));
         return ResponseEntity.created(location).body(insertedCategory);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody CategoryRequest request) {
-        return ResponseEntity.ok(categoriesService.update(id, request));
+        Category response = categoriesService.update(id, request);
+        log.info(response.toString());
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         categoriesService.delete(id);
+        log.info(String.format("### Deletion success: id %s", id));
         return ResponseEntity.noContent().build();
     }
 

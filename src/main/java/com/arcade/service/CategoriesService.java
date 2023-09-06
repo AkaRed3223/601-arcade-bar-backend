@@ -30,22 +30,19 @@ public class CategoriesService {
                 .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.CATEGORY, id));
     }
 
-    public Category findByName(String name) {
-        return categoriesRepository
-                .findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.CATEGORY, name));
-    }
-
     public Category insert(CategoryRequest request) {
-        Category category = new Category(
-                request.getName(),
-                request.getPosition()
-        );
+        int maxPosition = findAll().stream().mapToInt(Category::getPosition).max().orElse(0);
+
+        Category category = new Category(request.getName(), maxPosition + 1);
 
         try {
             categoriesRepository.save(category);
         } catch (DataIntegrityViolationException e) {
-            throw new ResourceAlreadyExistsException(ResourcesEnum.CATEGORY, ResourcesFieldsEnum.POSITION, String.valueOf(request.getPosition()));
+            throw new ResourceAlreadyExistsException(
+                    ResourcesEnum.CATEGORY,
+                    ResourcesFieldsEnum.NAME,
+                    String.valueOf(request.getName())
+            );
         }
 
         return category;

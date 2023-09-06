@@ -23,7 +23,7 @@ public class Category {
     private String name;
 
     @Column(name = "position", unique = true, nullable = false)
-    private Integer position;
+    private Integer position = 0;
 
     public Category(String name, Integer position) {
         this.name = name;

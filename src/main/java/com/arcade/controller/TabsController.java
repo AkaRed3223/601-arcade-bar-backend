@@ -5,6 +5,7 @@ import com.arcade.model.request.TabRequest;
 import com.arcade.service.TabsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,25 +29,37 @@ public class TabsController {
 
     @GetMapping("/{externalId}")
     public ResponseEntity<Tab> findByExternalId(@PathVariable Long externalId) {
-        return ResponseEntity.ok(tabsService.findByExternalId(externalId));
+        Tab response = tabsService.findByExternalId(externalId);
+        log.info(response.toString());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
     public ResponseEntity<Tab> insert(@RequestBody TabRequest body) {
         Tab insertedCategory = tabsService.insert(body);
+        log.info(insertedCategory.toString());
         URI location = URI.create(String.format("/%s/%s", "tabs", insertedCategory.getId()));
         return ResponseEntity.created(location).body(insertedCategory);
     }
 
-    /*@PutMapping("/{id}")
-    public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody CategoryRequest request) {
-        return ResponseEntity.ok(categoriesService.update(id, request));
-    }*/
+    @PutMapping("/{tabExternalId}/insert")
+    public ResponseEntity<Tab> insertProductInTab(@PathVariable Long tabExternalId, @Param("productId") Long productId) {
+        Tab response = tabsService.insertProductInTab(tabExternalId, productId);
+        log.info(response.toString());
+        return ResponseEntity.ok(response);
+    }
 
-    /*@DeleteMapping("/{id}")
+    @PutMapping("/{tabExternalId}/remove")
+    public ResponseEntity<Tab> deleteProductFromTab(@PathVariable Long tabExternalId, @Param("productId") Long productId) {
+        Tab response = tabsService.removeProductFromTab(tabExternalId, productId);
+        log.info(response.toString());
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        categoriesService.delete(id);
+        tabsService.delete(id);
+        log.info(String.format("### Deletion success: id %s", id));
         return ResponseEntity.noContent().build();
-    }*/
-
+    }
 }

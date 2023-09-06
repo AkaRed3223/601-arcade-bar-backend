@@ -1,14 +1,17 @@
 package com.arcade.model.request;
 
-import com.arcade.model.Category;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class ProductRequest {
 
     private String name;
     private Double price;
-    private Category category;
+    private Long categoryId;
+
+    public ProductRequest(String name, String price, Long categoryId) {
+        this.name = name;
+        this.price = Double.valueOf(price.replace(',', '.'));
+        this.categoryId = categoryId;
+    }
 }

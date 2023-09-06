@@ -32,15 +32,9 @@ public class ProductsService {
                 .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.PRODUCT, id));
     }
 
-    public Product findByName(String name) {
-        return productsRepository
-                .findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.PRODUCT, name));
-    }
-
     public Product insert(ProductRequest request) {
 
-        Category category = categoriesService.findByName(request.getCategory().getName());
+        Category category = categoriesService.findById(request.getCategoryId());
         Product product = new Product(request.getName(), request.getPrice(), category);
 
         try {
@@ -72,5 +66,4 @@ public class ProductsService {
         findById(id);
         productsRepository.deleteById(id);
     }
-
 }

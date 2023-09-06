@@ -1,11 +1,9 @@
 package com.arcade.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,22 +19,20 @@ public class Tab {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(name = "externalId", nullable = false, unique = true)
+    @Column(name = "external_id", nullable = false, unique = true)
     private Long externalId;
 
     @Column(name = "customer", nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Product> products;
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<Product> products = new ArrayList<>();
 
     @Column(name = "total", nullable = false)
-    private Double total;
+    private Double total = 0.0;
 
-    public Tab(Long externalId, String name, List<Product> products) {
+    public Tab(Long externalId, @NonNull String name) {
         this.externalId = externalId;
         this.name = name;
-        this.products = products;
-        this.total = products.stream().mapToDouble(Product::getPrice).sum();
     }
 }
