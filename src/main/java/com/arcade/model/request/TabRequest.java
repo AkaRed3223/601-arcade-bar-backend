@@ -1,12 +1,10 @@
 package com.arcade.model.request;
 
 import io.micrometer.common.util.StringUtils;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 
 import java.beans.ConstructorProperties;
-import java.util.List;
 
 @Data
 public class TabRequest {
