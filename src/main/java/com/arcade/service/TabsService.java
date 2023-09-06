@@ -2,6 +2,7 @@ package com.arcade.service;
 
 import com.arcade.constant.ResourcesEnum;
 import com.arcade.constant.ResourcesFieldsEnum;
+import com.arcade.exception.FailedToCheckoutException;
 import com.arcade.exception.ResourceAlreadyExistsException;
 import com.arcade.exception.ResourceNotFoundException;
 import com.arcade.exception.TabNotEmptyException;
@@ -35,13 +36,12 @@ public class TabsService {
                 .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.TAB, id));
     }
 
-    public Tab findByExternalId(Long externalId) {
-        return tabsRepository
-                .findByExternalId(externalId)
-                .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.TAB, externalId));
-    }
-
     public Tab insert(TabRequest request) {
+        var openTab = tabsRepository.findByExternalIdAndIsOpen(request.getExternalId(), true);
+        if (openTab.isPresent()) {
+            throw new ResourceAlreadyExistsException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, String.valueOf(request.getExternalId()));
+        }
+
         Tab tab = new Tab(request.getExternalId(), request.getName());
 
         try {
@@ -53,16 +53,16 @@ public class TabsService {
         return tab;
     }
 
-    public Tab insertProductInTab(Long tabExternalId, Long productId) {
-        return updateProductsFromTab(tabExternalId, productId, true);
+    public Tab insertProductInTab(Long id, Long productId) {
+        return updateProductsFromTab(id, productId, true);
     }
 
-    public Tab removeProductFromTab(Long tabExternalId, Long productId) {
-        return updateProductsFromTab(tabExternalId, productId, false);
+    public Tab removeProductFromTab(Long id, Long productId) {
+        return updateProductsFromTab(id, productId, false);
     }
 
-    private Tab updateProductsFromTab(Long tabExternalId, Long productId, Boolean isAdd) {
-        Tab tab = findByExternalId(tabExternalId);
+    private Tab updateProductsFromTab(Long id, Long productId, Boolean isAdd) {
+        Tab tab = findById(id);
 
         if (isAdd) {
             tab.getProducts().add(productsService.findById(productId));
@@ -78,10 +78,21 @@ public class TabsService {
         try {
             tabsRepository.save(tab);
         } catch (DataIntegrityViolationException e) {
-            throw new ResourceAlreadyExistsException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, String.valueOf(tabExternalId));
+            throw new ResourceAlreadyExistsException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, String.valueOf(tab.getExternalId()));
         }
         return tab;
 
+    }
+
+    public Tab checkoutTab(Long id) {
+        Tab tab = findById(id);
+        tab.setIsOpen(false);
+        try {
+            tabsRepository.save(tab);
+        } catch (DataIntegrityViolationException e) {
+            throw new FailedToCheckoutException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, String.valueOf(tab.getExternalId()));
+        }
+        return tab;
     }
 
     public void delete(Long id) {
@@ -97,7 +108,6 @@ public class TabsService {
             throw new ResourceNotFoundException(ResourcesEnum.TAB, tab.getName());
         }
     }
-
 
 
 }

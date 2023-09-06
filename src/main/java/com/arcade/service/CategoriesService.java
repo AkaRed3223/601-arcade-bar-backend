@@ -2,6 +2,7 @@ package com.arcade.service;
 
 import com.arcade.constant.ResourcesEnum;
 import com.arcade.constant.ResourcesFieldsEnum;
+import com.arcade.exception.CategoryNullException;
 import com.arcade.exception.ResourceAlreadyExistsException;
 import com.arcade.exception.ResourceNotFoundException;
 import com.arcade.model.Category;
@@ -33,6 +34,9 @@ public class CategoriesService {
     public Category insert(CategoryRequest request) {
         int maxPosition = findAll().stream().mapToInt(Category::getPosition).max().orElse(0);
 
+        if (StringUtils.isEmpty(request.getName())) {
+            throw new CategoryNullException();
+        }
         Category category = new Category(request.getName(), maxPosition + 1);
 
         try {

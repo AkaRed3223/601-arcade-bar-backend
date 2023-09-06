@@ -27,9 +27,9 @@ public class TabsController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{externalId}")
-    public ResponseEntity<Tab> findByExternalId(@PathVariable Long externalId) {
-        Tab response = tabsService.findByExternalId(externalId);
+    @GetMapping("/{id}")
+    public ResponseEntity<Tab> findById(@PathVariable Long id) {
+        Tab response = tabsService.findById(id);
         log.info(response.toString());
         return ResponseEntity.ok(response);
     }
@@ -42,16 +42,25 @@ public class TabsController {
         return ResponseEntity.created(location).body(insertedCategory);
     }
 
-    @PutMapping("/{tabExternalId}/insert")
-    public ResponseEntity<Tab> insertProductInTab(@PathVariable Long tabExternalId, @Param("productId") Long productId) {
-        Tab response = tabsService.insertProductInTab(tabExternalId, productId);
+    @PutMapping("/{id}/insert")
+    public ResponseEntity<Tab> insertProductInTab(@PathVariable Long id, @Param("productId") Long productId) {
+        Tab response = tabsService.insertProductInTab(id, productId);
         log.info(response.toString());
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{tabExternalId}/remove")
-    public ResponseEntity<Tab> deleteProductFromTab(@PathVariable Long tabExternalId, @Param("productId") Long productId) {
-        Tab response = tabsService.removeProductFromTab(tabExternalId, productId);
+    @PutMapping("/{id}/remove")
+    public ResponseEntity<Tab> deleteProductFromTab(@PathVariable Long id, @Param("productId") Long productId) {
+        Tab response = tabsService.removeProductFromTab(id, productId);
+        log.info(response.toString());
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/checkout")
+    public ResponseEntity<Tab> checkoutTab(@PathVariable Long id) {
+        log.info(String.format("### Checking out Tab #%s", id));
+        Tab response = tabsService.checkoutTab(id);
+        log.info("### Checkout successful");
         log.info(response.toString());
         return ResponseEntity.ok(response);
     }

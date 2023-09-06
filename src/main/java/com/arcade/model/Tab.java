@@ -19,7 +19,7 @@ public class Tab {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(name = "external_id", nullable = false, unique = true)
+    @Column(name = "external_id", nullable = false)
     private Long externalId;
 
     @Column(name = "customer", nullable = false)
@@ -30,6 +30,9 @@ public class Tab {
 
     @Column(name = "total", nullable = false)
     private Double total = 0.0;
+
+    @Column(name = "is_open", nullable = false)
+    private Boolean isOpen = true;
 
     public Tab(Long externalId, @NonNull String name) {
         this.externalId = externalId;
