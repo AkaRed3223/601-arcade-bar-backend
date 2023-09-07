@@ -36,10 +36,12 @@ public class TabsController {
 
     @PostMapping
     public ResponseEntity<Tab> insert(@RequestBody TabRequest body) {
-        Tab insertedCategory = tabsService.insert(body);
-        log.info(insertedCategory.toString());
-        URI location = URI.create(String.format("/%s/%s", "tabs", insertedCategory.getId()));
-        return ResponseEntity.created(location).body(insertedCategory);
+        log.info(String.format("### Starting tab creation with externalId: %s. Name: %s", body.getExternalId(), body.getName()));
+        Tab createdTab = tabsService.insert(body);
+        log.info(createdTab.toString());
+        URI location = URI.create(String.format("/%s/%s", "tabs", createdTab.getId()));
+        log.info(String.format("### Tab created successfully. id: %s. externalId: %s. name: %s", createdTab.getId(), createdTab.getExternalId(), createdTab.getName()));
+        return ResponseEntity.created(location).body(createdTab);
     }
 
     @PutMapping("/{id}/insert")
@@ -67,8 +69,8 @@ public class TabsController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.info(String.format("Starting Deletion for tab id %s", id));
         tabsService.delete(id);
-        log.info(String.format("### Deletion success: id %s", id));
         return ResponseEntity.noContent().build();
     }
 }
