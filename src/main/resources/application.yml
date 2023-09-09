@@ -1,11 +1,12 @@
+server:
+  port: 8080
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/
-    password: Wishma22
+    url: jdbc:postgresql://34.138.247.58/arcade
+    username: postgres
+    password: Wishma22!
   jpa:
-    hibernate:
-#      ddl-auto: create-drop
-      ddl-auto: update
     show-sql: false
     properties:
       hibernate:

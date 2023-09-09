@@ -16,6 +16,7 @@ import java.util.List;
 @RequestMapping("/tabs")
 @AllArgsConstructor
 @Slf4j
+@CrossOrigin
 public class TabsController {
 
     private final TabsService tabsService;

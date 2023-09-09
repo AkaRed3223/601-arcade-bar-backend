@@ -15,6 +15,7 @@ import java.util.List;
 @RequestMapping("/products")
 @AllArgsConstructor
 @Slf4j
+@CrossOrigin
 public class ProductsController {
 
     private final ProductsService productsService;
