@@ -3,10 +3,12 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://34.138.247.58/arcade
+    url: jdbc:postgresql://postgres:5432/arcade
     username: postgres
-    password: Wishma22!
+    password: Wishma22
   jpa:
+    hibernate:
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate:

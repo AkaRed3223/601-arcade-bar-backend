@@ -1,0 +1,22 @@
+version: '3'
+services:
+  arcade-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14.2-alpine
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: Wishma22
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres-data:
