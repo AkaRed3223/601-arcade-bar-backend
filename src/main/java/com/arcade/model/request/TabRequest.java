@@ -13,7 +13,7 @@ public class TabRequest {
     private Long externalId;
 
     @ConstructorProperties({"firstName", "lastName"})
-    TabRequest(@NonNull String name, @NonNull Long externalId) {
+    public TabRequest(@NonNull String name, @NonNull Long externalId) {
         if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException("name");
         } else {

@@ -2,10 +2,7 @@ package com.arcade.service;
 
 import com.arcade.constant.ResourcesEnum;
 import com.arcade.constant.ResourcesFieldsEnum;
-import com.arcade.exception.FailedToCheckoutException;
-import com.arcade.exception.ResourceAlreadyExistsException;
-import com.arcade.exception.ResourceNotFoundException;
-import com.arcade.exception.TabNotEmptyException;
+import com.arcade.exception.*;
 import com.arcade.model.Product;
 import com.arcade.model.Tab;
 import com.arcade.model.request.TabRequest;
@@ -64,6 +61,10 @@ public class TabsService {
     private Tab updateProductsFromTab(Long id, Long productId, Boolean isAdd) {
         Tab tab = findById(id);
 
+        if (!tab.getIsOpen()) {
+            throw new TabAlreadyClosedException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, tab.getExternalId().toString());
+        }
+
         if (isAdd) {
             tab.getProducts().add(productsService.findById(productId));
         } else {
@@ -86,6 +87,12 @@ public class TabsService {
 
     public Tab checkoutTab(Long id) {
         Tab tab = findById(id);
+
+        if (!tab.getIsOpen()) {
+            log.warn(String.format("### Error checking out Tab #%s", tab.getExternalId()));
+            throw new TabAlreadyClosedException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, tab.getExternalId().toString());
+        }
+
         tab.setIsOpen(false);
         try {
             tabsRepository.save(tab);
