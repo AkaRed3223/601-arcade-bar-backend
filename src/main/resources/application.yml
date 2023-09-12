@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://34.138.138.138:5432/
+    url: jdbc:postgresql://arcade-db-1.cqcamnunylzc.us-east-2.rds.amazonaws.com/arcade
     username: postgres
     password: Wishma22
   jpa:
