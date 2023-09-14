@@ -46,16 +46,25 @@ public class TabsController {
     }
 
     @PutMapping("/{id}/insert")
-    public ResponseEntity<Tab> insertProductInTab(@PathVariable Long id, @Param("productId") Long productId) {
-        Tab response = tabsService.insertProductInTab(id, productId);
+    public ResponseEntity<Tab> insertProductInTab(
+            @PathVariable("id") Long tabId,
+            @Param("productId") Long productId) {
+
+        log.info(String.format("### Start inserting PRODUCT-%s in TAB-%s", productId, tabId));
+        Tab response = tabsService.insertProductInTab(tabId, productId);
         log.info(response.toString());
+        log.info("### Product insertion in tab success");
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}/remove")
-    public ResponseEntity<Tab> deleteProductFromTab(@PathVariable Long id, @Param("productId") Long productId) {
-        Tab response = tabsService.removeProductFromTab(id, productId);
+    public ResponseEntity<Tab> deleteProductFromTab(
+            @PathVariable("id") Long tabId,
+            @Param("productId") Long productId) {
+        log.info(String.format("### Start removing PRODUCT-%s in TAB-%s", productId, tabId));
+        Tab response = tabsService.removeProductFromTab(tabId, productId);
         log.info(response.toString());
+        log.info("### Product deletion from tab success");
         return ResponseEntity.ok(response);
     }
 
@@ -63,8 +72,8 @@ public class TabsController {
     public ResponseEntity<Tab> checkoutTab(@PathVariable Long id) {
         log.info(String.format("### Checking out Tab #%s", id));
         Tab response = tabsService.checkoutTab(id);
-        log.info("### Checkout successful");
         log.info(response.toString());
+        log.info("### Checkout successful");
         return ResponseEntity.ok(response);
     }
 
@@ -72,6 +81,7 @@ public class TabsController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info(String.format("Starting Deletion for tab id %s", id));
         tabsService.delete(id);
+        log.info(String.format("Deletion success for TAB id: %s", id));
         return ResponseEntity.noContent().build();
     }
 }

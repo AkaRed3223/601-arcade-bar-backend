@@ -6,10 +6,10 @@ import com.arcade.service.CategoriesService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -23,38 +23,50 @@ public class CategoriesController {
 
     @GetMapping
     public ResponseEntity<List<Category>> findAll() {
+        log.info("### Starting fetching all Categories");
         List<Category> response = categoriesService.findAll();
-        response.sort(Comparator.comparingInt(Category::getPosition));
-        log.info(response.toString());
+        if (CollectionUtils.isEmpty(response)) {
+            log.info("### No categories have been found");
+        } else {
+            log.info(response.toString());
+            log.info("### Fetching Categories Success");
+        }
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Category> findById(@PathVariable long id) {
+        log.info(String.format("### Starting fetch Categories with ID-%s", id));
         Category response = categoriesService.findById(id);
         log.info(response.toString());
+        log.info("### Fetch Categories Success");
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
     public ResponseEntity<Category> insert(@RequestBody CategoryRequest body) {
+        log.info(String.format("### Starting inserting Categories with NAME-%s", body.getName()));
         Category insertedCategory = categoriesService.insert(body);
         log.info(insertedCategory.toString());
-        URI location = URI.create(String.format("/%s/%s", "categories", insertedCategory.getId()));
+        log.info("### Inserting Categories Success");
+        URI location = URI.create(String.format("/categories/%s", insertedCategory.getId()));
         return ResponseEntity.created(location).body(insertedCategory);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody CategoryRequest request) {
+        log.info(String.format("### Starting updating Category ID-%s", id));
         Category response = categoriesService.update(id, request);
         log.info(response.toString());
+        log.info("### Category update Success");
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+        log.info(String.format("### Starting Deletion for Category ID-%s", id));
         categoriesService.delete(id);
-        log.info(String.format("### Deletion success: id %s", id));
+        log.info("### Category Deletion success");
         return ResponseEntity.noContent().build();
     }
 

@@ -13,7 +13,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -22,7 +24,10 @@ public class CategoriesService {
     private final CategoriesRepository categoriesRepository;
 
     public List<Category> findAll() {
-        return categoriesRepository.findAll();
+        return categoriesRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparingInt(Category::getPosition))
+                .collect(Collectors.toList());
     }
 
     public Category findById(long id) {

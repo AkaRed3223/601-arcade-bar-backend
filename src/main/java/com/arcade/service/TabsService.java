@@ -109,7 +109,6 @@ public class TabsService {
         }
         try {
             tabsRepository.deleteById(tab.getId());
-            log.info(String.format("Deletion success for TAB id: %s, externalId: %s, name: %s", tab.getId(), tab.getExternalId(), tab.getName()));
         } catch (Exception e) {
             log.error(String.format("Failed to delete TAB id: %s, externalId: %s, name: %s", tab.getId(), tab.getExternalId(), tab.getName()));
             throw new ResourceNotFoundException(ResourcesEnum.TAB, tab.getName());
