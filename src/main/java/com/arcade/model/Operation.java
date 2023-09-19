@@ -18,7 +18,7 @@ public class Operation {
 
     @Id
     @SequenceGenerator(name = "operation_sequence", sequenceName = "operation_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_sequence")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "category_sequence")
     @Column(name = "id", updatable = false)
     @Setter(AccessLevel.NONE)
     private Long id;

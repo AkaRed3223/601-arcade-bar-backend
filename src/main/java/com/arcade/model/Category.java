@@ -14,7 +14,7 @@ public class Category {
 
     @Id
     @SequenceGenerator(name = "category_sequence", sequenceName = "category_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_sequence")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "category_sequence")
     @Column(name = "id", updatable = false)
     @Setter(AccessLevel.NONE)
     private Long id;

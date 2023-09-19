@@ -14,7 +14,7 @@ public class Tab {
 
     @Id
     @SequenceGenerator(name = "tab_sequence", sequenceName = "tab_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tab_sequence")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "tab_sequence")
     @Column(name = "id", updatable = false)
     @Setter(AccessLevel.NONE)
     private Long id;
