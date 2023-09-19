@@ -13,8 +13,8 @@ import lombok.Setter;
 public class Product {
 
     @Id
-    @SequenceGenerator(name = "product_sequence", sequenceName = "product_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "product_sequence")
+    @SequenceGenerator(name = "product_generator", sequenceName = "product_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_generator")
     @Column(name = "id", updatable = false)
     @Setter(AccessLevel.NONE)
     private Long id;
