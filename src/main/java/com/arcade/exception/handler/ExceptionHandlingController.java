@@ -40,7 +40,19 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(TabAlreadyClosedException.class)
-    public ResponseEntity<ErrorResponse> handleTabAlreadyClosed(TabAlreadyClosedException ex) {
+    public ResponseEntity<ErrorResponse> handleTabAlreadyClosedException(TabAlreadyClosedException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(TabAlreadyAssignedException.class)
+    public ResponseEntity<ErrorResponse> handleTabAlreadyAssignedException(TabAlreadyAssignedException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(OperationNotReadyForCloseoutException.class)
+    public ResponseEntity<ErrorResponse> handleOperationNotReadyForCloseoutException(OperationNotReadyForCloseoutException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }

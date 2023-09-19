@@ -34,7 +34,11 @@ public class Tab {
     @Column(name = "is_open", nullable = false)
     private Boolean isOpen = true;
 
-    public Tab(Long externalId, @NonNull String name) {
+    @Column(name = "operation_id", nullable = false)
+    private Long operationId;
+
+    public Tab(Long externalId, @NonNull String name, Long operationId) {
+        this.operationId = operationId;
         this.externalId = externalId;
         this.name = name;
     }

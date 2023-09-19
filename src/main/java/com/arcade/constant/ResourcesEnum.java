@@ -5,4 +5,5 @@ public enum ResourcesEnum {
     CATEGORY,
     PRODUCT,
     TAB,
+    OPERATION,
 }

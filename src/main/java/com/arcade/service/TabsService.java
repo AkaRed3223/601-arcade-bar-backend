@@ -3,6 +3,7 @@ package com.arcade.service;
 import com.arcade.constant.ResourcesEnum;
 import com.arcade.constant.ResourcesFieldsEnum;
 import com.arcade.exception.*;
+import com.arcade.model.Operation;
 import com.arcade.model.Product;
 import com.arcade.model.Tab;
 import com.arcade.model.request.TabRequest;
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -22,6 +24,7 @@ public class TabsService {
 
     private final TabsRepository tabsRepository;
     private final ProductsService productsService;
+    private final OperationsService operationsService;
 
     public List<Tab> findAll() {
         return tabsRepository.findAll();
@@ -33,18 +36,35 @@ public class TabsService {
                 .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.TAB, id));
     }
 
+    @Transactional
     public Tab insert(TabRequest request) {
-        var openTab = tabsRepository.findByExternalIdAndIsOpen(request.getExternalId(), true);
-        if (openTab.isPresent()) {
-            throw new ResourceAlreadyExistsException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, String.valueOf(request.getExternalId()));
-        }
+        Operation currentOperation = operationsService.findCurrent();
 
-        Tab tab = new Tab(request.getExternalId(), request.getName());
+        tabsRepository.findByExternalIdAndIsOpen(request.getExternalId(), true)
+                .ifPresent(tab -> {
+                    throw new ResourceAlreadyExistsException(
+                            ResourcesEnum.TAB,
+                            ResourcesFieldsEnum.EXTERNAL_ID,
+                            request.getExternalId().toString()
+                    );
+                });
+
+        Tab tab = new Tab(
+                request.getExternalId(),
+                request.getName(),
+                currentOperation.getId()
+        );
+
+        currentOperation.getTabs().add(tab);
 
         try {
             tabsRepository.save(tab);
         } catch (DataIntegrityViolationException e) {
-            throw new ResourceAlreadyExistsException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, String.valueOf(request.getExternalId()));
+            throw new ResourceAlreadyExistsException(
+                    ResourcesEnum.TAB,
+                    ResourcesFieldsEnum.EXTERNAL_ID,
+                    String.valueOf(request.getExternalId())
+            );
         }
 
         return tab;
