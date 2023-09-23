@@ -38,8 +38,6 @@ public class TabsService {
 
     @Transactional
     public Tab insert(TabRequest request) {
-        Operation currentOperation = operationsService.findCurrent();
-
         tabsRepository.findByExternalIdAndIsOpen(request.getExternalId(), true)
                 .ifPresent(tab -> {
                     throw new ResourceAlreadyExistsException(
@@ -49,13 +47,12 @@ public class TabsService {
                     );
                 });
 
+        Operation operation = operationsService.findCurrent();
         Tab tab = new Tab(
                 request.getExternalId(),
                 request.getName(),
-                currentOperation.getId()
+                operation.getId()
         );
-
-        currentOperation.getTabs().add(tab);
 
         try {
             tabsRepository.save(tab);
@@ -66,6 +63,9 @@ public class TabsService {
                     String.valueOf(request.getExternalId())
             );
         }
+
+        operation.getTabs().add(tab);
+        operationsService.insert(operation);
 
         return tab;
     }

@@ -27,6 +27,11 @@ public class OperationsService {
                 .orElseThrow(() -> new ResourceNotFoundException("There is no open operation"));
     }
 
+    public Operation insert(Operation operation) {
+        operationsRepository.save(operation);
+        return operation;
+    }
+
     public Operation initiateOperation() {
         if (operationsRepository.findByIsOpenTrue().isPresent()) {
             throw new ResourceAlreadyExistsException("There is an operation in progress");

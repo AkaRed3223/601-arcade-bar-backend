@@ -3,7 +3,6 @@ package com.arcade.model;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -13,7 +12,6 @@ import java.util.List;
 @Data
 @Entity(name = "Operation")
 @Table(name = "operation")
-@NoArgsConstructor
 public class Operation {
 
     @Id
