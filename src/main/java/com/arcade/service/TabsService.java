@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +29,15 @@ public class TabsService {
 
     public List<Tab> findAll() {
         return tabsRepository.findAll();
+    }
+
+    public List<Tab> findAllFromCurrentOperation() {
+        Operation currentOperation = operationsService.findCurrent();
+        List<Tab> tabs = findAll();
+
+        return tabs.stream()
+                .filter(t -> t.getOperationId().equals(currentOperation.getId()))
+                .collect(Collectors.toList());
     }
 
     public Tab findById(Long id) {

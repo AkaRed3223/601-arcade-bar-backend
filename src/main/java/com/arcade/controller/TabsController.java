@@ -21,9 +21,16 @@ public class TabsController {
 
     private final TabsService tabsService;
 
-    @GetMapping
+    /*@GetMapping
     public ResponseEntity<List<Tab>> findAll() {
         List<Tab> response = tabsService.findAll();
+        log.info(response.toString());
+        return ResponseEntity.ok(response);
+    }*/
+
+    @GetMapping
+    public ResponseEntity<List<Tab>> findAll() {
+        List<Tab> response = tabsService.findAllFromCurrentOperation();
         log.info(response.toString());
         return ResponseEntity.ok(response);
     }
