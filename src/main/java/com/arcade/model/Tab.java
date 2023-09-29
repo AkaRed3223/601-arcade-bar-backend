@@ -3,6 +3,7 @@ package com.arcade.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +35,18 @@ public class Tab {
     @Column(name = "is_open", nullable = false)
     private Boolean isOpen = true;
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
     @Column(name = "operation_id", nullable = false)
     private Long operationId;
+
+    @Column(name = "created_at", nullable = false)
+    @Setter(AccessLevel.NONE)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public Tab(Long externalId, @NonNull String name, Long operationId) {
         this.operationId = operationId;

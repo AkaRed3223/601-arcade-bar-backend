@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @Entity(name = "Category")
@@ -24,6 +26,13 @@ public class Category {
 
     @Column(name = "position", unique = true, nullable = false)
     private Integer position = 0;
+
+    @Column(name = "created_at", nullable = false)
+    @Setter(AccessLevel.NONE)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public Category(String name, Integer position) {
         this.name = name;

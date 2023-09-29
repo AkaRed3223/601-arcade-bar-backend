@@ -22,8 +22,12 @@ public class ProductsService {
     private final ProductsRepository productsRepository;
     private final CategoriesService categoriesService;
 
-    public List<Product> findAll() {
+    /*public List<Product> findAll() {
         return productsRepository.findAll();
+    }*/
+
+    public List<Product> findAllByIsActive(Boolean isActive) {
+        return productsRepository.findAllByIsActive(isActive);
     }
 
     public Product findById(Long id) {
@@ -63,7 +67,11 @@ public class ProductsService {
     }
 
     public void delete(Long id) {
-        findById(id);
-        productsRepository.deleteById(id);
+        /*findById(id);
+        productsRepository.deleteById(id);*/
+
+        Product product = findById(id);
+        product.setIsActive(false);
+        productsRepository.save(product);
     }
 }

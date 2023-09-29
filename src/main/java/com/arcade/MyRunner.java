@@ -1,10 +1,10 @@
-/*
 package com.arcade;
 
 import com.arcade.model.request.CategoryRequest;
 import com.arcade.model.request.ProductRequest;
 import com.arcade.model.request.TabRequest;
 import com.arcade.service.CategoriesService;
+import com.arcade.service.OperationsService;
 import com.arcade.service.ProductsService;
 import com.arcade.service.TabsService;
 import lombok.AllArgsConstructor;
@@ -18,6 +18,7 @@ public class MyRunner implements CommandLineRunner {
     private CategoriesService categoriesService;
     private ProductsService productsService;
     private TabsService tabsService;
+    private OperationsService operationsService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -33,8 +34,9 @@ public class MyRunner implements CommandLineRunner {
         productsService.insert(new ProductRequest("Coca-Cola", "6.90", 2L));
         productsService.insert(new ProductRequest("Batata frita", "14.90", 3L));
 
+        operationsService.initiateOperation();
+
         tabsService.insert(new TabRequest("Cesar", 64L));
         tabsService.insert(new TabRequest("Leo", 65L));
     }
 }
-*/

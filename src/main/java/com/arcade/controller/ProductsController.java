@@ -5,6 +5,7 @@ import com.arcade.model.request.ProductRequest;
 import com.arcade.service.ProductsService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +22,9 @@ public class ProductsController {
     private final ProductsService productsService;
 
     @GetMapping
-    public ResponseEntity<List<Product>> findAll() {
-        var response = productsService.findAll();
+    public ResponseEntity<List<Product>> findAll(@Param("isActive") Boolean isActive) {
+        if (isActive == null) isActive = true;
+        var response = productsService.findAllByIsActive(isActive);
         log.info(response.toString());
         return ResponseEntity.ok(response);
     }

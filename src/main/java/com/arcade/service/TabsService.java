@@ -28,7 +28,8 @@ public class TabsService {
     private final OperationsService operationsService;
 
     public List<Tab> findAll() {
-        return tabsRepository.findAll();
+        //return tabsRepository.findAll();
+        return tabsRepository.findAllByIsDeletedFalse();
     }
 
     public List<Tab> findAllFromCurrentOperation() {
@@ -137,12 +138,15 @@ public class TabsService {
         if (!CollectionUtils.isEmpty(tab.getProducts())) {
             throw new TabNotEmptyException();
         }
-        try {
+        tab.setIsDeleted(true);
+        tab.setIsOpen(false);
+        tabsRepository.save(tab);
+        /*try {
             tabsRepository.deleteById(tab.getId());
         } catch (Exception e) {
             log.error(String.format("Failed to delete TAB id: %s, externalId: %s, name: %s", tab.getId(), tab.getExternalId(), tab.getName()));
             throw new ResourceNotFoundException(ResourcesEnum.TAB, tab.getName());
-        }
+        }*/
     }
 
 

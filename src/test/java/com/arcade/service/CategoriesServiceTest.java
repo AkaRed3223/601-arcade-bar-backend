@@ -44,11 +44,6 @@ class CategoriesServiceTest {
     }
 
     @Test
-    void findAll1() {
-
-    }
-
-    @Test
     void findById() {
         Category expectedResponse = new Category("Lanches", 5);
         when(repository.findById(1L)).thenReturn(Optional.of(expectedResponse));

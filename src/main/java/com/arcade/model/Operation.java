@@ -22,6 +22,7 @@ public class Operation {
     private Long id;
 
     @Column(name = "operation_start_date", nullable = false)
+    @Setter(AccessLevel.NONE)
     private LocalDateTime startDate = LocalDateTime.now();
 
     @Column(name = "operation_end_date")
