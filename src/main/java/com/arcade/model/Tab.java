@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +24,11 @@ public class Tab {
     @Column(name = "external_id", nullable = false)
     private Long externalId;
 
-    @Column(name = "customer", nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "phone", nullable = false)
+    private String phone;
 
     @ManyToMany(cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
@@ -43,14 +47,15 @@ public class Tab {
 
     @Column(name = "created_at", nullable = false)
     @Setter(AccessLevel.NONE)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private String createdAt = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private String updatedAt = "";
 
-    public Tab(Long externalId, @NonNull String name, Long operationId) {
-        this.operationId = operationId;
+    public Tab(Long externalId, @NonNull String name, @NonNull String phone, Long operationId) {
         this.externalId = externalId;
         this.name = name;
+        this.phone = phone;
+        this.operationId = operationId;
     }
 }

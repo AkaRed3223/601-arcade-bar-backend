@@ -62,6 +62,7 @@ public class TabsService {
         Tab tab = new Tab(
                 request.getExternalId(),
                 request.getName(),
+                request.getPhone(),
                 operation.getId()
         );
 

@@ -44,7 +44,7 @@ public class TabsController {
 
     @PostMapping
     public ResponseEntity<Tab> insert(@RequestBody TabRequest body) {
-        log.info(String.format("### Starting tab creation with externalId: %s. Name: %s", body.getExternalId(), body.getName()));
+        log.info(String.format("### Starting tab creation with externalId: %s. Name: %s. Phone: %s", body.getExternalId(), body.getName(), body.getPhone()));
         Tab createdTab = tabsService.insert(body);
         log.info(createdTab.toString());
         URI location = URI.create(String.format("/%s/%s", "tabs", createdTab.getId()));

@@ -1,3 +1,4 @@
+/*
 package com.arcade;
 
 import com.arcade.model.request.CategoryRequest;
@@ -21,7 +22,7 @@ public class MyRunner implements CommandLineRunner {
     private OperationsService operationsService;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         categoriesService.insert(new CategoryRequest("Lanches", null));
         categoriesService.insert(new CategoryRequest("Bebidas", null));
         categoriesService.insert(new CategoryRequest("Porções", null));
@@ -36,7 +37,8 @@ public class MyRunner implements CommandLineRunner {
 
         operationsService.initiateOperation();
 
-        tabsService.insert(new TabRequest("Cesar", 64L));
-        tabsService.insert(new TabRequest("Leo", 65L));
+        tabsService.insert(new TabRequest("Cesar", "11988989117", 64L));
+        tabsService.insert(new TabRequest("Mi", "11983604792", 65L));
     }
 }
+*/

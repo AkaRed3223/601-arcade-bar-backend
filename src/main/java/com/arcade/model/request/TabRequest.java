@@ -4,20 +4,19 @@ import io.micrometer.common.util.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.beans.ConstructorProperties;
-
 @Data
 public class TabRequest {
 
     private String name;
+    private String phone;
     private Long externalId;
 
-    @ConstructorProperties({"firstName", "lastName"})
-    public TabRequest(@NonNull String name, @NonNull Long externalId) {
-        if (StringUtils.isEmpty(name)) {
-            throw new IllegalArgumentException("name");
+    public TabRequest(@NonNull String name, @NonNull String phone, @NonNull Long externalId) {
+        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(phone) || phone.length() < 10 || phone.length() > 11) {
+            throw new IllegalArgumentException("At least of the mandatory parameters is wrong");
         } else {
-            this.name = name;
+            this.name = name.trim();
+            this.phone = phone.trim();
             this.externalId = externalId;
         }
     }

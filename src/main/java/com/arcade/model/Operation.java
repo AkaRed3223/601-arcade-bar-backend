@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +24,10 @@ public class Operation {
 
     @Column(name = "operation_start_date", nullable = false)
     @Setter(AccessLevel.NONE)
-    private LocalDateTime startDate = LocalDateTime.now();
+    private String startDate = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
     @Column(name = "operation_end_date")
-    private LocalDateTime endDate;
+    private String endDate = "";
 
     @Column(name = "is_open", nullable = false)
     private Boolean isOpen = true;
@@ -36,6 +37,6 @@ public class Operation {
 
     public void closeOperation() {
         this.isOpen = false;
-        this.endDate = LocalDateTime.now();
+        this.endDate = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
 }

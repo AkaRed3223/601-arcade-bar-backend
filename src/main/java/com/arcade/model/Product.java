@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @NoArgsConstructor
@@ -32,10 +33,10 @@ public class Product {
 
     @Column(name = "created_at", nullable = false)
     @Setter(AccessLevel.NONE)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private String createdAt = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private String updatedAt = "";
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
