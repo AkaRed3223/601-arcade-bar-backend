@@ -100,17 +100,21 @@ public class TabsService {
             throw new TabAlreadyClosedException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, tab.getExternalId().toString());
         }
 
-        Product productToAdd = productsService.findById(productId);
+        Product product = productsService.findById(productId);
         if (isAdd) {
-            tab.getProducts().add(productToAdd);
+            tab.getProducts().add(product);
         } else {
-            Product product = tab.getProducts().stream().filter(p -> p.getId().equals(productId)).findFirst()
+            Product productToRemove = tab.getProducts().stream().filter(p -> p.getId().equals(productId)).findFirst()
                     .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.PRODUCT, productId));
 
-            tab.getProducts().remove(product);
+            tab.getProducts().remove(productToRemove);
         }
 
-        tab.setTotalDue(Double.sum(tab.getTotalDue(), productToAdd.getPrice()));
+        if (isAdd) {
+            tab.setTotalDue(Double.sum(tab.getTotalDue(), product.getPrice()));
+        } else {
+            tab.setTotalDue(tab.getTotalDue() - product.getPrice());
+        }
 
         try {
             tabsRepository.save(tab);
