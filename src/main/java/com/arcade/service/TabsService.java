@@ -4,8 +4,10 @@ import com.arcade.constant.ResourcesEnum;
 import com.arcade.constant.ResourcesFieldsEnum;
 import com.arcade.exception.*;
 import com.arcade.model.Operation;
+import com.arcade.model.Payment;
 import com.arcade.model.Product;
 import com.arcade.model.Tab;
+import com.arcade.model.request.PaymentRequest;
 import com.arcade.model.request.TabRequest;
 import com.arcade.repository.TabsRepository;
 import lombok.AllArgsConstructor;
@@ -26,6 +28,7 @@ public class TabsService {
     private final TabsRepository tabsRepository;
     private final ProductsService productsService;
     private final OperationsService operationsService;
+    private final PaymentsService paymentsService;
 
     public List<Tab> findAll() {
         //return tabsRepository.findAll();
@@ -97,8 +100,9 @@ public class TabsService {
             throw new TabAlreadyClosedException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, tab.getExternalId().toString());
         }
 
+        Product productToAdd = productsService.findById(productId);
         if (isAdd) {
-            tab.getProducts().add(productsService.findById(productId));
+            tab.getProducts().add(productToAdd);
         } else {
             Product product = tab.getProducts().stream().filter(p -> p.getId().equals(productId)).findFirst()
                     .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.PRODUCT, productId));
@@ -106,7 +110,7 @@ public class TabsService {
             tab.getProducts().remove(product);
         }
 
-        tab.setTotal(tab.getProducts().stream().mapToDouble(Product::getPrice).sum());
+        tab.setTotalDue(Double.sum(tab.getTotalDue(), productToAdd.getPrice()));
 
         try {
             tabsRepository.save(tab);
@@ -117,6 +121,36 @@ public class TabsService {
 
     }
 
+    public Payment payTab(Long id, PaymentRequest body) {
+        Tab tab = findById(id);
+
+        if (!tab.getIsOpen()) {
+            log.warn(String.format("### Error inserting payment for Tab #%s", tab.getExternalId()));
+            throw new TabAlreadyClosedException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, tab.getExternalId().toString());
+        }
+
+        double value = body.getValue();
+        double totalDue = tab.getTotalDue();
+
+        if (value >= totalDue) {
+            value = totalDue;
+            body.setValue(value);
+        }
+
+        Payment payment = paymentsService.insert(tab, body);
+
+        tab.getPayments().add(payment);
+        tab.setTotalPaid(tab.getTotalPaid() + value);
+        tab.setTotalDue(Math.max(0.0, totalDue - value));
+
+        try {
+            tabsRepository.save(tab);
+        } catch (DataIntegrityViolationException e) {
+            throw new FailedToPayException(tab.getId(), value);
+        }
+        return payment;
+    }
+
     public Tab checkoutTab(Long id) {
         Tab tab = findById(id);
 
@@ -124,6 +158,8 @@ public class TabsService {
             log.warn(String.format("### Error checking out Tab #%s", tab.getExternalId()));
             throw new TabAlreadyClosedException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, tab.getExternalId().toString());
         }
+
+        payTab(tab.getId(), new PaymentRequest(tab.getTotalDue(), tab.getName(), "CHECKOUT"));
 
         tab.setIsOpen(false);
         try {

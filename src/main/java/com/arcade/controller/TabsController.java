@@ -1,6 +1,8 @@
 package com.arcade.controller;
 
+import com.arcade.model.Payment;
 import com.arcade.model.Tab;
+import com.arcade.model.request.PaymentRequest;
 import com.arcade.model.request.TabRequest;
 import com.arcade.service.TabsService;
 import lombok.AllArgsConstructor;
@@ -72,6 +74,15 @@ public class TabsController {
         Tab response = tabsService.removeProductFromTab(tabId, productId);
         log.info(response.toString());
         log.info("### Product deletion from tab success");
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/pay")
+    public ResponseEntity<Payment> payTab(@PathVariable Long id, @RequestBody PaymentRequest body) {
+        log.info(String.format("### Starting payment for Tab: #%s. Name: %s. Value: %s", id, body.getName(), body.getName()));
+        Payment response = tabsService.payTab(id, body);
+        log.info(response.toString());
+        log.info("### Payment successful");
         return ResponseEntity.ok(response);
     }
 

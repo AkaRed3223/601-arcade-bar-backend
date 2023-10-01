@@ -9,4 +9,5 @@ public enum ResourcesFieldsEnum {
     CATEGORY,
     PRODUCTS,
     TOTAL,
+    VALUE,
 }

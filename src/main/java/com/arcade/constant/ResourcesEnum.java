@@ -6,4 +6,5 @@ public enum ResourcesEnum {
     PRODUCT,
     TAB,
     OPERATION,
+    PAYMENT,
 }

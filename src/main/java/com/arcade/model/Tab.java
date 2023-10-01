@@ -33,8 +33,11 @@ public class Tab {
     @ManyToMany(cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
 
-    @Column(name = "total", nullable = false)
-    private Double total = 0.0;
+    @Column(name = "total_due", nullable = false)
+    private Double totalDue = 0.0;
+
+    @Column(name = "total_paid", nullable = false)
+    private Double totalPaid = 0.0;
 
     @Column(name = "is_open", nullable = false)
     private Boolean isOpen = true;
@@ -51,6 +54,9 @@ public class Tab {
 
     @Column(name = "updated_at")
     private String updatedAt = "";
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Payment> payments = new ArrayList<>();
 
     public Tab(Long externalId, @NonNull String name, @NonNull String phone, Long operationId) {
         this.externalId = externalId;
