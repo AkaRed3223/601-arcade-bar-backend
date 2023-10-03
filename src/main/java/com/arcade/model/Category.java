@@ -25,7 +25,7 @@ public class Category {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "position", unique = true, nullable = false)
+    @Column(name = "position", nullable = false)
     private Integer position = 0;
 
     @Column(name = "created_at", nullable = false)
