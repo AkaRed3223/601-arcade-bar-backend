@@ -28,7 +28,7 @@ class CategoriesServiceTest {
 
     @Test
     void findAll() {
-        when(repository.findAll()).thenReturn(List.of(
+        when(repository.findAllByIsActive(true)).thenReturn(List.of(
                 new Category("Lanches", 1),
                 new Category("Bebidas", 2),
                 new Category("Porções", 3),
