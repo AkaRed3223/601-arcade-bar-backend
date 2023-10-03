@@ -22,7 +22,7 @@ public class Category {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "position", unique = true, nullable = false)
@@ -34,6 +34,9 @@ public class Category {
 
     @Column(name = "updated_at")
     private String updatedAt = "";
+
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 
     public Category(String name, Integer position) {
         this.name = name;

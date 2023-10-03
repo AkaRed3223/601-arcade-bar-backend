@@ -2,6 +2,7 @@ package com.arcade.service;
 
 import com.arcade.constant.ResourcesEnum;
 import com.arcade.constant.ResourcesFieldsEnum;
+import com.arcade.exception.FailedToInactivateResourceException;
 import com.arcade.exception.ResourceAlreadyExistsException;
 import com.arcade.exception.ResourceNotFoundException;
 import com.arcade.model.Category;
@@ -13,6 +14,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -67,11 +70,15 @@ public class ProductsService {
     }
 
     public void delete(Long id) {
-        /*findById(id);
-        productsRepository.deleteById(id);*/
-
         Product product = findById(id);
         product.setIsActive(false);
+        product.setUpdatedAt(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         productsRepository.save(product);
+
+        try {
+            productsRepository.save(product);
+        } catch (DataIntegrityViolationException e) {
+            throw new FailedToInactivateResourceException(ResourcesEnum.PRODUCT, ResourcesFieldsEnum.ID, product.getId().toString());
+        }
     }
 }

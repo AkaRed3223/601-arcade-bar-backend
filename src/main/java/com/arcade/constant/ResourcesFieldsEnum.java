@@ -2,6 +2,7 @@ package com.arcade.constant;
 
 public enum ResourcesFieldsEnum {
 
+    ID,
     NAME,
     POSITION,
     PRICE,
