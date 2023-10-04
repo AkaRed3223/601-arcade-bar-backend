@@ -12,7 +12,7 @@ public class PaymentRequest {
     private String details;
 
     public PaymentRequest(@NonNull Double value, @NonNull String name, String details) {
-        if (StringUtils.isEmpty(name) || value == 0.0) {
+        if (StringUtils.isEmpty(name) || value < 0.0) {
             throw new IllegalArgumentException("Value and Name are mandatory parameters");
         } else {
             this.name = name.trim();
