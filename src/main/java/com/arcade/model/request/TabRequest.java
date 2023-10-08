@@ -11,8 +11,8 @@ public class TabRequest {
     private String phone;
     private Long externalId;
 
-    public TabRequest(@NonNull String name, @NonNull String phone, @NonNull Long externalId) {
-        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(phone) || phone.length() < 10 || phone.length() > 11) {
+    public TabRequest(@NonNull String name, String phone, @NonNull Long externalId) {
+        if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException("At least of the mandatory parameters is wrong");
         } else {
             this.name = name.trim();
