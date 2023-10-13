@@ -34,15 +34,6 @@ public class CategoriesController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Category> findById(@PathVariable long id) {
-        log.info(String.format("### Starting fetch Categories with ID-%s", id));
-        Category response = categoriesService.findById(id);
-        log.info(response.toString());
-        log.info("### Fetch Categories Success");
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping
     public ResponseEntity<Category> insert(@RequestBody CategoryRequest body) {
         log.info(String.format("### Starting inserting Categories with NAME-%s", body.getName()));
@@ -53,15 +44,6 @@ public class CategoriesController {
         return ResponseEntity.created(location).body(insertedCategory);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Category> update(@PathVariable Long id, @RequestBody CategoryRequest request) {
-        log.info(String.format("### Starting updating Category ID-%s", id));
-        Category response = categoriesService.update(id, request);
-        log.info(response.toString());
-        log.info("### Category update Success");
-        return ResponseEntity.ok(response);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info(String.format("### Starting Deletion for Category ID-%s", id));
@@ -69,5 +51,4 @@ public class CategoriesController {
         log.info("### Category Deletion success");
         return ResponseEntity.noContent().build();
     }
-
 }

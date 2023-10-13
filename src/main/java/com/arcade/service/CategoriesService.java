@@ -26,13 +26,6 @@ public class CategoriesService {
 
     private final CategoriesRepository categoriesRepository;
 
-    /*public List<Category> findAll() {
-        return categoriesRepository.findAll()
-                .stream()
-                .sorted(Comparator.comparingInt(Category::getPosition))
-                .collect(Collectors.toList());
-    }*/
-
     public List<Category> findAll() {
         return categoriesRepository.findAllByIsActive(true)
                 .stream()
@@ -62,21 +55,6 @@ public class CategoriesService {
                     ResourcesFieldsEnum.NAME,
                     String.valueOf(request.getName())
             );
-        }
-
-        return category;
-    }
-
-    public Category update(Long id, CategoryRequest request) {
-        Category category = findById(id);
-
-        if (StringUtils.isNotBlank(request.getName())) category.setName(request.getName());
-        if (request.getPosition() != null) category.setPosition(request.getPosition());
-
-        try {
-            categoriesRepository.save(category);
-        } catch (DataIntegrityViolationException e) {
-            throw new ResourceAlreadyExistsException(ResourcesEnum.CATEGORY, ResourcesFieldsEnum.POSITION, String.valueOf(request.getPosition()));
         }
 
         return category;

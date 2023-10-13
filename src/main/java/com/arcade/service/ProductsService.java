@@ -9,7 +9,6 @@ import com.arcade.model.Category;
 import com.arcade.model.Product;
 import com.arcade.model.request.ProductRequest;
 import com.arcade.repository.ProductsRepository;
-import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -25,10 +24,6 @@ public class ProductsService {
     private final ProductsRepository productsRepository;
     private final CategoriesService categoriesService;
 
-    /*public List<Product> findAll() {
-        return productsRepository.findAll();
-    }*/
-
     public List<Product> findAllByIsActive(Boolean isActive) {
         return productsRepository.findAllByIsActive(isActive);
     }
@@ -40,25 +35,8 @@ public class ProductsService {
     }
 
     public Product insert(ProductRequest request) {
-
         Category category = categoriesService.findById(request.getCategoryId());
         Product product = new Product(request.getName(), request.getPrice(), category);
-
-        try {
-            productsRepository.save(product);
-        } catch (DataIntegrityViolationException e) {
-            throw new ResourceAlreadyExistsException(ResourcesEnum.PRODUCT, ResourcesFieldsEnum.NAME, String.valueOf(request.getName()));
-        }
-
-        return product;
-    }
-
-    public Product update(Long id, ProductRequest request) {
-
-        Product product = findById(id);
-
-        if (StringUtils.isNotBlank(request.getName())) product.setName(request.getName());
-        if (request.getPrice() != null) product.setPrice(request.getPrice());
 
         try {
             productsRepository.save(product);

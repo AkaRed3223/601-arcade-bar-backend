@@ -55,6 +55,4 @@ public class OperationsController {
         URI location = URI.create(String.format("/%s/%s", "operations", closedOperation.getId()));
         return ResponseEntity.created(location).body(closedOperation);
     }
-
-
 }

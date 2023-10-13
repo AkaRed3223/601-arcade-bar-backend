@@ -11,17 +11,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @AllArgsConstructor
 public class PaymentsService {
 
     private final PaymentsRepository paymentsRepository;
-
-    public List<Payment> findAll() {
-        return paymentsRepository.findAll();
-    }
 
     public Payment insert(Tab tab, PaymentRequest request) {
         Payment payment = new Payment(tab, request);
@@ -38,5 +32,4 @@ public class PaymentsService {
 
         return payment;
     }
-
 }

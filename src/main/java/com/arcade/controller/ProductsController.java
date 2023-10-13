@@ -44,13 +44,6 @@ public class ProductsController {
         return ResponseEntity.created(location).body(insertedProduct);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody ProductRequest request) {
-        Product response = productsService.update(id, request);
-        log.info(response.toString());
-        return ResponseEntity.ok(response);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         log.info(String.format("### Starting Deletion for Product ID-%s", id));
