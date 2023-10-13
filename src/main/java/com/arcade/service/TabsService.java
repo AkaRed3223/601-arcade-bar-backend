@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,6 @@ public class TabsService {
     private final PaymentsService paymentsService;
 
     public List<Tab> findAll() {
-        //return tabsRepository.findAll();
         return tabsRepository.findAllByIsDeletedFalse();
     }
 
@@ -39,7 +40,8 @@ public class TabsService {
         Operation currentOperation = operationsService.findCurrent();
         List<Tab> tabs = findAll();
 
-        return tabs.stream()
+        return tabs
+                .stream()
                 .filter(t -> t.getOperationId().equals(currentOperation.getId()))
                 .collect(Collectors.toList());
     }
@@ -52,7 +54,8 @@ public class TabsService {
 
     @Transactional
     public Tab insert(TabRequest request) {
-        tabsRepository.findByExternalIdAndIsOpen(request.getExternalId(), true)
+        tabsRepository
+                .findByExternalIdAndIsOpen(request.getExternalId(), true)
                 .ifPresent(tab -> {
                     throw new ResourceAlreadyExistsException(
                             ResourcesEnum.TAB,
@@ -96,25 +99,24 @@ public class TabsService {
     private Tab updateProductsFromTab(Long id, Long productId, Boolean isAdd) {
         Tab tab = findById(id);
 
-        if (!tab.getIsOpen()) {
-            throw new TabAlreadyClosedException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, tab.getExternalId().toString());
-        }
+        validateTab(tab);
 
         Product product = productsService.findById(productId);
         if (isAdd) {
             tab.getProducts().add(product);
+            tab.setTotalDue(tab.getTotalDue() + product.getPrice());
         } else {
-            Product productToRemove = tab.getProducts().stream().filter(p -> p.getId().equals(productId)).findFirst()
+            Product productToRemove = tab.getProducts()
+                    .stream()
+                    .filter(p -> p.getId().equals(productId))
+                    .findFirst()
                     .orElseThrow(() -> new ResourceNotFoundException(ResourcesEnum.PRODUCT, productId));
 
             tab.getProducts().remove(productToRemove);
-        }
-
-        if (isAdd) {
-            tab.setTotalDue(Double.sum(tab.getTotalDue(), product.getPrice()));
-        } else {
             tab.setTotalDue(tab.getTotalDue() - product.getPrice());
         }
+
+        tab.setUpdatedAt(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         try {
             tabsRepository.save(tab);
@@ -122,16 +124,12 @@ public class TabsService {
             throw new ResourceAlreadyExistsException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, String.valueOf(tab.getExternalId()));
         }
         return tab;
-
     }
 
     public Payment payTab(Long id, PaymentRequest body) {
         Tab tab = findById(id);
 
-        if (!tab.getIsOpen()) {
-            log.warn(String.format("### Error inserting payment for Tab #%s", tab.getExternalId()));
-            throw new TabAlreadyClosedException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, tab.getExternalId().toString());
-        }
+        validateTab(tab);
 
         double value = body.getValue();
         double totalDue = tab.getTotalDue();
@@ -146,6 +144,7 @@ public class TabsService {
         tab.getPayments().add(payment);
         tab.setTotalPaid(tab.getTotalPaid() + value);
         tab.setTotalDue(Math.max(0.0, totalDue - value));
+        tab.setUpdatedAt(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 
         try {
             tabsRepository.save(tab);
@@ -158,14 +157,13 @@ public class TabsService {
     public Tab checkoutTab(Long id) {
         Tab tab = findById(id);
 
-        if (!tab.getIsOpen()) {
-            log.warn(String.format("### Error checking out Tab #%s", tab.getExternalId()));
-            throw new TabAlreadyClosedException(ResourcesEnum.TAB, ResourcesFieldsEnum.EXTERNAL_ID, tab.getExternalId().toString());
-        }
+        validateTab(tab);
 
         payTab(tab.getId(), new PaymentRequest(tab.getTotalDue(), tab.getName(), "CHECKOUT"));
 
         tab.setIsOpen(false);
+        tab.setUpdatedAt(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+
         try {
             tabsRepository.save(tab);
         } catch (DataIntegrityViolationException e) {
@@ -181,14 +179,22 @@ public class TabsService {
         }
         tab.setIsDeleted(true);
         tab.setIsOpen(false);
+        tab.setUpdatedAt(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         tabsRepository.save(tab);
-        /*try {
-            tabsRepository.deleteById(tab.getId());
-        } catch (Exception e) {
-            log.error(String.format("Failed to delete TAB id: %s, externalId: %s, name: %s", tab.getId(), tab.getExternalId(), tab.getName()));
-            throw new ResourceNotFoundException(ResourcesEnum.TAB, tab.getName());
-        }*/
     }
 
+    protected void validateTab(Tab tab) {
+        if (isTabClosed(tab)) {
+            log.warn(String.format("### Error performing operation for Tab #%s", tab.getExternalId()));
+            throw new TabAlreadyClosedException(
+                    ResourcesEnum.TAB,
+                    ResourcesFieldsEnum.EXTERNAL_ID,
+                    tab.getExternalId().toString()
+            );
+        }
+    }
 
+    private boolean isTabClosed(Tab tab) {
+        return !tab.getIsOpen();
+    }
 }
