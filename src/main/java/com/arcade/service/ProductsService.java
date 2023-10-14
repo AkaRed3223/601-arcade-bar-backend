@@ -36,7 +36,7 @@ public class ProductsService {
 
     public Product insert(ProductRequest request) {
         Category category = categoriesService.findById(request.getCategoryId());
-        Product product = new Product(request.getName(), request.getPrice(), category);
+        Product product = new Product(request.getName(), request.getPrice(), request.getImage(), category);
 
         try {
             productsRepository.save(product);

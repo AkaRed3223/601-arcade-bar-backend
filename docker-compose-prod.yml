@@ -1,0 +1,8 @@
+version: '3'
+services:
+  arcade-backend-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"

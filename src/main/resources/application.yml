@@ -1,11 +1,11 @@
 spring:
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE}
   datasource:
-    url: ${DB_HOST}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://arcade-db-1.cqcamnunylzc.us-east-2.rds.amazonaws.com/arcade
+    username: postgres
+    password: Wishma22
   jpa:
+    hibernate:
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:

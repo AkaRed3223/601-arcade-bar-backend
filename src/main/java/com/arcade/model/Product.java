@@ -28,6 +28,9 @@ public class Product {
     @Column(name = "price", nullable = false)
     private Double price;
 
+    @Column(name = "image", length = 100000)
+    private String image = "";
+
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
@@ -42,9 +45,10 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    public Product(String name, Double price, Category category) {
+    public Product(String name, Double price, String image, Category category) {
         this.name = name;
         this.price = price;
+        this.image = image;
         this.category = category;
     }
 }
